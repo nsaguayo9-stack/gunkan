@@ -1,0 +1,3 @@
+import http from 'node:http';import fs from 'node:fs/promises';import path from 'node:path';
+const root=path.resolve(process.env.SERVE_DIR||'.');
+http.createServer(async(req,res)=>{try{let p=decodeURIComponent(new URL(req.url,'http://localhost').pathname);if(p==='/')p='/index.html';const f=path.resolve(root,'.'+p);if(!f.startsWith(root+path.sep))throw Error();const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp','.csv':'text/csv'};res.setHeader('Content-Type',types[path.extname(f)]||'application/octet-stream');res.end(await fs.readFile(f));}catch{res.statusCode=404;res.end('No encontrado');}}).listen(4173,'0.0.0.0',()=>console.log('http://localhost:4173'));
